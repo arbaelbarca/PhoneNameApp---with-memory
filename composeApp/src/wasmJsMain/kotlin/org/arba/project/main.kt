@@ -10,7 +10,7 @@ import org.koin.core.context.startKoin
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    initializeKoin()
+//    initializeKoin()
 
     ComposeViewport(document.body!!) {
 //        val contactViewModel = ViewModelProvider(this)[ContactViewModel::class.java]
