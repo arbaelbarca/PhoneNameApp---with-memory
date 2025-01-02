@@ -1,6 +1,7 @@
 package org.arba.project
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,11 +19,13 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -42,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import org.arba.project.data.ContactUiState
 import org.jetbrains.compose.resources.painterResource
 
@@ -50,7 +55,7 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
 
 //    val listDummyContact by contactViewModel.contactList.observeAsState()
 
-    val contactState by contactViewModel.contactList.collectAsState()
+    val contactState by contactViewModel.contactUiState.collectAsState()
 
     var inputName by remember {
         mutableStateOf("")
@@ -124,22 +129,21 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                 }
             }
 
+            when (contactState) {
+                is ContactUiState.EmptyData -> {
+                    ProgressBar(false)
+                    val getStringEmpty = contactState
+                    Text(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        textAlign = TextAlign.Center,
+                        text = getStringEmpty.toString()
+                    )
+                }
 
-//        when (contactState) {
-//            is ContactUiState.Success -> {
-//
-//            }
-//
-//            is ContactUiState.EmptyData -> {
-//
-//            }
-//
-//            is ContactUiState.Error -> {
-//
-//            }
-//        }
-            when (val state = contactViewModel.uiState.collectAsState().value) {
                 is ContactUiState.Error -> {
+                    ProgressBar(false)
                     Text(
                         modifier = Modifier
                             .fillMaxSize()
@@ -149,41 +153,35 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                     )
                 }
 
+                ContactUiState.Loading -> {
+                    ProgressBar(true)
+                }
+
                 is ContactUiState.Success -> {
-                    val dataList = state.news
+                    val dataList = (contactState as ContactUiState.Success<List<ContactModel>>).data
                     println("respon Json List $dataList")
-                    LazyColumn {
-                        itemsIndexed(dataList) { index, item ->
-                            MainContactItem(
-                                contactViewModel,
-                                item
-                            )
+
+                    ProgressBar(false)
+                    if (dataList.isNotEmpty()) {
+                        LazyColumn {
+                            itemsIndexed(dataList) { index, item ->
+                                MainContactItem(
+                                    contactViewModel,
+                                    item
+                                )
+                            }
                         }
+                    } else {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            textAlign = TextAlign.Center,
+                            text = "Data Empty"
+                        )
                     }
                 }
-
-                is ContactUiState.EmptyData -> {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Data Empty"
-                    )
-                }
-
-                ContactUiState.Loading -> TODO()
             }
-
-
-//        if (listDummyContact.isNullOrEmpty()) {
-//
-//        } else {
-//            listDummyContact?.let { itemsDummy ->
-//
-//            }
-//        }
-
         }
     }
 
@@ -274,4 +272,30 @@ fun DeleteConfirmationDialog(
             }
         }
     )
+}
+
+@Composable
+fun ProgressBar(isVissible: Boolean) {
+    println("respon IsVisible $isVissible")
+
+    if (isVissible) {
+        Surface(
+            Modifier.fillMaxSize(),
+            color = Color.Transparent
+        ) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+
+                    color = Color.DarkGray
+                )
+            }
+        }
+    } else {
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+
 }

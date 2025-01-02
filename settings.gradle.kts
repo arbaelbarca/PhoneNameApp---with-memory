@@ -28,4 +28,11 @@ dependencyResolutionManagement {
     }
 }
 
+buildCache {
+    local {
+        directory = File(rootDir, ".gradle-build-cache")
+    }
+}
+
 include(":composeApp")
+

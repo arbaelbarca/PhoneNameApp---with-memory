@@ -2,6 +2,8 @@ package org.arba.project
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -10,19 +12,25 @@ import kotlinx.coroutines.launch
 import org.arba.project.data.ContactUiState
 
 class ContactViewModel : ViewModel() {
-    val contactList = MutableStateFlow(ContactUiState.Success(emptyList()))
-    private val emptyData = MutableStateFlow(ContactUiState.EmptyData(""))
-    var uiState: StateFlow<ContactUiState> = contactList
+    val contactList = MutableStateFlow<ContactUiState<List<ContactModel>>>(ContactUiState.Loading)
+    var contactUiState: StateFlow<ContactUiState<List<ContactModel>>> = contactList
 
     fun getContactList() {
         viewModelScope.launch {
-            ContactManager.getAllContactList().onEach { list ->
-                if (list.isNotEmpty()) {
-                    contactList.value = ContactUiState.Success(list)
-                } else {
-                    emptyData.value = ContactUiState.EmptyData("")
-                }
-            }.collect()
+            try {
+                contactList.value = ContactUiState.Loading
+                delay(1500)
+                ContactManager.getAllContactList().onEach { list ->
+                    if (list.isNotEmpty()) {
+                        contactList.value = ContactUiState.Success(list)
+                    } else {
+                        contactList.value = ContactUiState.EmptyData("Empty Data")
+                    }
+                }.collect()
+            } catch (e: Exception) {
+                contactList.value = ContactUiState.Error(e)
+            }
+
         }
 //        contactList.value = ContactManager.getAllContactList()
     }

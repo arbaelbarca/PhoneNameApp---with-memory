@@ -12,15 +12,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.KoinApplication
+import org.koin.dsl.koinApplication
 
 import testkmp.composeapp.generated.resources.Res
 import testkmp.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App(contactViewModel: ContactViewModel) {
+fun App() {
+    val contactViewModel = koinViewModel<ContactViewModel>()
+
     MaterialTheme {
-        val contactViewModel = androidx.lifecycle.ViewModelProvider(this)[ContactViewModel::class.java]
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
 //            Button(onClick = { showContent = !showContent }) {
