@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import org.arba.project.di.initializeKoin
 
 class MainActivity : ComponentActivity() {
@@ -13,20 +14,20 @@ class MainActivity : ComponentActivity() {
 
         initializeKoin()
         setContent {
-            App()
-//            MainApp(contactViewModel)
+            AppAndroidPreview()
+            //            MainApp(contactViewModel)
         }
     }
 }
 
-//@Preview
-//@Composable
-//fun AppAndroidPreview() {
-//    App()
-//
-//}
-
+@Preview(showBackground = true)
 @Composable
-fun MainApp(contactViewModel: ContactViewModel) {
-    MainContactPage(contactViewModel)
+fun AppAndroidPreview() {
+    App()
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun MainApp() {
+//    MainContactPage()
+//}

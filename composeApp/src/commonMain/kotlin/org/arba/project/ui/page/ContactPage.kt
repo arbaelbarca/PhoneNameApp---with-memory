@@ -27,7 +27,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +45,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.arba.project.data.ContactUiState
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@Preview
 @Composable
 fun MainContactPage(contactViewModel: ContactViewModel) {
 
@@ -51,11 +55,11 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
 
     val contactState by contactViewModel.contactUiState.collectAsState()
 
-    var inputName by remember {
+    val inputName = remember {
         mutableStateOf("")
     }
 
-    var inputPhone by remember {
+    val inputPhone = remember {
         mutableStateOf("")
     }
 
@@ -81,9 +85,9 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                         .padding(end = 10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     placeholder = { Text("Input Name") },
-                    value = inputName,
+                    value = inputName.value,
                     onValueChange = {
-                        inputName = it
+                        inputName.value = it
                     })
 
                 OutlinedTextField(
@@ -93,9 +97,9 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                         .padding(end = 10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeholder = { Text("Input Phone") },
-                    value = inputPhone,
+                    value = inputPhone.value,
                     onValueChange = {
-                        inputPhone = it
+                        inputPhone.value = it
                     })
 
                 Spacer(
@@ -109,9 +113,15 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
                     onClick = {
-                        contactViewModel.addContact(ContactModel(0, inputName, inputPhone))
-                        inputName = ""
-                        inputPhone = ""
+                        contactViewModel.addContact(
+                            ContactModel(
+                                0,
+                                inputName.value,
+                                inputPhone.value
+                            )
+                        )
+                        inputName.value = ""
+                        inputPhone.value = ""
                     }) {
                     Text(
                         "Add Contact",
@@ -158,7 +168,9 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                             itemsIndexed(dataList) { index, item ->
                                 MainContactItem(
                                     contactViewModel,
-                                    item
+                                    item,
+                                    inputName,
+                                    inputPhone
                                 )
                             }
                         }
@@ -199,10 +211,13 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
 
 }
 
+
 @Composable
 fun MainContactItem(
     contactViewModel: ContactViewModel,
-    contactModel: ContactModel
+    contactModel: ContactModel,
+    inputName: MutableState<String>,
+    inputPhone: MutableState<String>
 ) {
 
     var showDialog by remember {
@@ -217,10 +232,11 @@ fun MainContactItem(
             .clip(RoundedCornerShape(10.dp))
             .background(Color.DarkGray)
             .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.padding(start = 5.dp)
         ) {
             Text(
                 contactModel.nameContact.toString(),
@@ -234,17 +250,37 @@ fun MainContactItem(
             )
         }
 
-        IconButton(
-            onClick = {
-                showDialog = true
+        Row {
+            IconButton(
+                modifier = Modifier
+                    .padding(end = 5.dp),
+                onClick = {
+//                    showDialog = true
+                    inputName.value = contactModel.nameContact.toString()
+                    inputPhone.value = contactModel.phoneContact.toString()
+                }
+            ) {
+                Icon(
+                    Icons.Filled.Edit,
+                    contentDescription = "Delete",
+                    tint = Color.White
+                )
             }
-        ) {
-            Icon(
-                Icons.Filled.Delete,
-                contentDescription = "Delete",
-                tint = Color.White
-            )
+
+            IconButton(
+                onClick = {
+                    showDialog = true
+                }
+            ) {
+                Icon(
+                    Icons.Filled.Delete,
+                    contentDescription = "Delete",
+                    tint = Color.White
+                )
+            }
         }
+
+
     }
 
     if (showDialog) {
