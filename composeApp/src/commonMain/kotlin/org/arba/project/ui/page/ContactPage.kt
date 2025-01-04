@@ -168,9 +168,7 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
                             itemsIndexed(dataList) { index, item ->
                                 MainContactItem(
                                     contactViewModel,
-                                    item,
-                                    inputName,
-                                    inputPhone
+                                    item
                                 )
                             }
                         }
@@ -215,12 +213,14 @@ fun MainContactPage(contactViewModel: ContactViewModel) {
 @Composable
 fun MainContactItem(
     contactViewModel: ContactViewModel,
-    contactModel: ContactModel,
-    inputName: MutableState<String>,
-    inputPhone: MutableState<String>
+    contactModel: ContactModel
 ) {
 
     var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showDialogUpdate by remember {
         mutableStateOf(false)
     }
 
@@ -255,10 +255,11 @@ fun MainContactItem(
                 modifier = Modifier
                     .padding(end = 5.dp),
                 onClick = {
-//                    showDialog = true
-                    inputName.value = contactModel.nameContact.toString()
-                    inputPhone.value = contactModel.phoneContact.toString()
+                    showDialogUpdate = true
                 }
+//                    showDialog = true
+//                    inputName.value = contactModel.nameContact.toString()
+//                    inputPhone.value = contactModel.phoneContact.toString()
             ) {
                 Icon(
                     Icons.Filled.Edit,
@@ -280,6 +281,11 @@ fun MainContactItem(
             }
         }
 
+        if (showDialogUpdate) {
+            UpdateContactDialog(contactModel, {
+                showDialogUpdate = false
+            })
+        }
 
     }
 
@@ -296,6 +302,53 @@ fun MainContactItem(
         )
     }
 
+}
+
+@Composable
+fun UpdateContactDialog(
+    getContactModel: ContactModel,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Update Data") },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Spacer(modifier = Modifier.padding(top = 10.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier.padding(top = 20.dp),
+                    value = getContactModel.nameContact.toString(),
+                    onValueChange = {
+
+                    }
+                )
+
+                OutlinedTextField(
+                    value = getContactModel.phoneContact.toString(),
+                    onValueChange = {
+
+                    }
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text("Update")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text("Cancel")
+            }
+        }
+    )
 }
 
 @Composable

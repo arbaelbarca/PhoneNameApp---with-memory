@@ -36,12 +36,17 @@ object ContactManager {
         _contactList.value += newContact // Tambahkan kontak baru
     }
 
-//    fun addContactItem(nameContact: String, phoneContact: String) {
-//        contactList.add(ContactModel(0, nameContact, phoneContact))
-//    }
+    fun updateContactItem(idContact: Int, name: String, phone: String) {
+        _contactList.value = _contactList.value.map { contact ->
+            if (contact.idContact == idContact) {
+                contact.copy(idContact, name, phone) // Update item yang sesuai
+            } else {
+                contact // Tetap sama untuk item lainnya
+            }
+        }
+    }
 
     fun deleteContactItem(contactModel: ContactModel) {
-//        contactList.remove(id)
         _contactList.value = _contactList.value.filterNot { it == contactModel }
 
     }

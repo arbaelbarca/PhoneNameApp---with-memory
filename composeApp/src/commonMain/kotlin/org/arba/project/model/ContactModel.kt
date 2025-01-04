@@ -1,6 +1,6 @@
 package org.arba.project
 
-class ContactModel(
+data class ContactModel(
     var idContact: Int? = 0,
     var nameContact: String? = "",
     var phoneContact: String? = ""

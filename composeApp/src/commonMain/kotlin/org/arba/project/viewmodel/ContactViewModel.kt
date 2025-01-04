@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import org.arba.project.data.ContactUiState
 
 class ContactViewModel : ViewModel() {
-    val contactList = MutableStateFlow<ContactUiState<List<ContactModel>>>(ContactUiState.Loading(emptyList()))
+    val contactList =
+        MutableStateFlow<ContactUiState<List<ContactModel>>>(ContactUiState.Loading(emptyList()))
     var contactUiState: StateFlow<ContactUiState<List<ContactModel>>> = contactList
 
     fun getContactList() {
@@ -37,6 +38,15 @@ class ContactViewModel : ViewModel() {
 
     fun addContact(contactModel: ContactModel) {
         ContactManager.addContactItem(
+            contactModel.nameContact.toString(),
+            contactModel.phoneContact.toString()
+        )
+        getContactList()
+    }
+
+    fun updateContact(contactModel: ContactModel) {
+        ContactManager.updateContactItem(
+            contactModel.idContact.toString().toInt(),
             contactModel.nameContact.toString(),
             contactModel.phoneContact.toString()
         )
