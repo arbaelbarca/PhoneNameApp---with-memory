@@ -74,7 +74,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-//            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.navigation.compose)
+            implementation(compose.material3)
 
             // Koin
             api(libs.koin.core)

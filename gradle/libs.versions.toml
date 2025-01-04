@@ -25,6 +25,7 @@ koinComposeMultiplatform = "1.2.0-alpha3"
 koinComposeViewModel = "1.2.0-Beta4"
 
 compose = "1.7.0"
+navigationCompose = "2.8.0-alpha02"
 
 [libraries]
 # Koin
@@ -56,6 +57,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-lifecycle-livedata-core-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-core-ktx", version.ref = "lifecycleLivedataCoreKtx" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
