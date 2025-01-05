@@ -1,6 +1,4 @@
-package org.arba.project.data
-
-import org.arba.project.ContactModel
+package org.arba.project.ui.state
 
 sealed class ContactUiState<out T> {
     data class Loading<out T>(val data: T) : ContactUiState<T>()

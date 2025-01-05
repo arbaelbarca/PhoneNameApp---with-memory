@@ -177,7 +177,7 @@ sealed class BottomBarScreen(
 
     data object Bookmark : BottomBarScreen(
         route = "BOOKMARK",
-        title = "Bookmark",
+        title = "Favorite",
         defaultIcon = Icons.Filled.Favorite,
     )
 }

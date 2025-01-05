@@ -2,14 +2,12 @@ package org.arba.project
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.arba.project.data.ContactUiState
+import org.arba.project.ui.state.ContactUiState
 
 class ContactViewModel : ViewModel() {
     val contactList =
