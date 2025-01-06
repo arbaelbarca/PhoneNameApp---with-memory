@@ -3,6 +3,7 @@ package org.arba.project.ui.screenitem
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,9 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.rememberConstraintsSizeResolver
+import coil3.request.ImageRequest
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.arba.project.data.mapping.ArticlesMapping
@@ -70,13 +74,13 @@ fun ArticlesItem(
                 .padding(15.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-//            val sizeResolver = rememberConstraintsSizeResolver()
-//            val painter = rememberAsyncImagePainter(
-//                model = ImageRequest.Builder(LocalPlatformContext.current)
-//                    .data(articlesResponse.urlToImage)
-//                    .size(sizeResolver)
-//                    .build()
-//            )
+            val sizeResolver = rememberConstraintsSizeResolver()
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(articlesResponse.urlToImage)
+                    .size(sizeResolver)
+                    .build()
+            )
 
 //            println("respon State ${painter.state}")
 //            println("respon Url image ${articlesResponse.urlToImage}")
@@ -88,83 +92,83 @@ fun ArticlesItem(
 //                }
 //                .build()
 
-//            AsyncImage(
-//                modifier = Modifier
-//                    .size(120.dp)
-//                    .clip(RoundedCornerShape(10.dp))
-//                    .background(Color.Gray),
-////                painter = painter,
-//                model = articlesResponse.urlToImage,
-//                contentDescription = null,
-//                contentScale = ContentScale.Crop,
-//                onError = { println("respon error image ${it.result.throwable.message}") },
-//                error = painterResource(Res.drawable.compose_multiplatform)
-//
-//            )
-
-            Box(
+            AsyncImage(
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(RoundedCornerShape(10)),
-                contentAlignment = Alignment.Center
-            ) {
-                var imageLoadResult by remember {
-                    mutableStateOf<Result<Painter>?>(null)
-                }
-                val painter = rememberAsyncImagePainter(
-                    model = articlesResponse.urlToImage,
-                    onSuccess = {
-                        imageLoadResult =
-                            if (it.painter.intrinsicSize.width > 1 && it.painter.intrinsicSize.height > 1) {
-                                Result.success(it.painter)
-                            } else {
-                                Result.failure(Exception("Invalid image size"))
-                            }
-                    },
-                    onError = {
-                        it.result.throwable.printStackTrace()
-                        imageLoadResult = Result.failure(it.result.throwable)
-                    }
-                )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.Gray),
+//                painter = painter,
+                model = articlesResponse.urlToImage,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                onError = { println("respon error image ${it.result.throwable.message}") },
+                error = painterResource(Res.drawable.compose_multiplatform)
 
-                val painterState by painter.state.collectAsState()
-                val transition by animateFloatAsState(
-                    targetValue = if (painterState is AsyncImagePainter.State.Success) {
-                        1f
-                    } else {
-                        0f
-                    },
-                    animationSpec = tween(durationMillis = 800)
-                )
+            )
 
-                when (val result = imageLoadResult) {
-                    null -> {
-//                    PulseAnimation(
-//                        modifier = Modifier.fillMaxSize()
-//                    )
-                    }
-
-                    else -> {
-                        Image(
-                            painter = if (result.isSuccess) painter else {
-                                painterResource(Res.drawable.compose_multiplatform)
-                            },
-                            contentDescription = articlesResponse.title,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    if (result.isSuccess) {
-                                        rotationX = (1f - transition) * 30f
-                                        val scale = 0.8f + (0.2f * transition)
-                                        scaleX = scale
-                                        scaleY = scale
-                                    }
-                                }
-                        )
-                    }
-                }
-            }
+//            Box(
+//                modifier = Modifier
+//                    .size(120.dp)
+//                    .clip(RoundedCornerShape(10)),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                var imageLoadResult by remember {
+//                    mutableStateOf<Result<Painter>?>(null)
+//                }
+//                val painter = rememberAsyncImagePainter(
+//                    model = articlesResponse.urlToImage,
+//                    onSuccess = {
+//                        imageLoadResult =
+//                            if (it.painter.intrinsicSize.width > 1 && it.painter.intrinsicSize.height > 1) {
+//                                Result.success(it.painter)
+//                            } else {
+//                                Result.failure(Exception("Invalid image size"))
+//                            }
+//                    },
+//                    onError = {
+//                        it.result.throwable.printStackTrace()
+//                        imageLoadResult = Result.failure(it.result.throwable)
+//                    }
+//                )
+//
+//                val painterState by painter.state.collectAsState()
+//                val transition by animateFloatAsState(
+//                    targetValue = if (painterState is AsyncImagePainter.State.Success) {
+//                        1f
+//                    } else {
+//                        0f
+//                    },
+//                    animationSpec = tween(durationMillis = 800)
+//                )
+//
+//                when (val result = imageLoadResult) {
+//                    null -> {
+////                    PulseAnimation(
+////                        modifier = Modifier.fillMaxSize()
+////                    )
+//                    }
+//
+//                    else -> {
+//                        Image(
+//                            painter = if (result.isSuccess) painter else {
+//                                painterResource(Res.drawable.compose_multiplatform)
+//                            },
+//                            contentDescription = articlesResponse.title,
+//                            contentScale = ContentScale.Crop,
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .graphicsLayer {
+//                                    if (result.isSuccess) {
+//                                        rotationX = (1f - transition) * 30f
+//                                        val scale = 0.8f + (0.2f * transition)
+//                                        scaleX = scale
+//                                        scaleY = scale
+//                                    }
+//                                }
+//                        )
+//                    }
+//                }
+//            }
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)

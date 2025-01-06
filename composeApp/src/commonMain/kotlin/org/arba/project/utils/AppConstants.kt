@@ -22,3 +22,4 @@ enum class Theme(val title: String) {
     LIGHT_MODE("Light Mode"),
     DARK_MODE("Dark Mode")
 }
+

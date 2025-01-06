@@ -65,7 +65,7 @@ fun ArticlesDetailScreen(
                     .height(300.dp),
                 model = article.urlToImage,
                 contentDescription = "detailimage",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 error = painterResource(Res.drawable.compose_multiplatform)
             )
 
@@ -84,7 +84,16 @@ fun ArticlesDetailScreen(
                 )
 
                 Text(
+                    modifier = Modifier.padding(top = 10.dp),
                     text = article.description.toString(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+
+                Text(
+                    modifier = Modifier.padding(top = 20.dp),
+                    text = article.publishedAt.toString(),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Gray

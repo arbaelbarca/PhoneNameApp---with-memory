@@ -47,6 +47,7 @@ import org.arba.project.data.mapping.ArticlesMapping
 import org.arba.project.data.model.ArticlesResponseNew
 import org.arba.project.ui.bottomnavigation.AppScreen
 import org.arba.project.ui.bottomnavigation.BottomBarScreen
+import org.arba.project.ui.page.setting.component.effect.ShimmerEffect
 import org.arba.project.ui.screenitem.ArticlesItem
 import org.arba.project.utils.Type
 import org.arba.project.utils.getType
@@ -126,15 +127,17 @@ fun HomeScreen(
                     }
                 },
                 onLoading = {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .align(Alignment.Center)
-                        )
-                    }
+//                    Box(
+//                        modifier = Modifier.fillMaxSize()
+//                    ) {
+//                        CircularProgressIndicator(
+//                            modifier = Modifier
+//                                .size(50.dp)
+//                                .align(Alignment.Center)
+//                        )
+//                    }
+
+                    ShimmerEffect()
 
                 },
                 onError = {
