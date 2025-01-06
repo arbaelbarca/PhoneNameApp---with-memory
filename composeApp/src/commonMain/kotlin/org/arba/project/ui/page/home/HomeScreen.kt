@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,20 +40,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import org.arba.project.data.model.ArticlesResponse
-import org.arba.project.data.model.articlesDummy
+import androidx.navigation.NavHostController
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.arba.project.data.mapping.ArticlesMapping
+import org.arba.project.data.model.ArticlesResponseNew
 import org.arba.project.ui.bottomnavigation.AppScreen
+import org.arba.project.ui.bottomnavigation.BottomBarScreen
 import org.arba.project.ui.screenitem.ArticlesItem
 import org.arba.project.utils.Type
 import org.arba.project.utils.getType
 import org.arba.project.viewmodel.ArticlesViewModel
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
 
-@Preview
+@OptIn(KoinExperimentalAPI::class)
 @Composable
-fun HomeScreen(onNavigate: (String) -> Unit) {
+fun HomeScreen(
+    navHostController: NavHostController,
+    onNavigate: (String) -> Unit
+) {
 //    var currentRoute by remember { mutableStateOf(bottomListItem[0].route) }
 
     val articlesViewModel = koinViewModel<ArticlesViewModel>()
@@ -61,7 +69,6 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
     var textInputSearch by rememberSaveable() {
         mutableStateOf("")
     }
-
 
     articlesViewModel.getArticlesNews()
 
@@ -79,7 +86,7 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
                 },
                 actions = {
                     IconButton(onClick = {
-
+                        navHostController.navigate(BottomBarScreen.Setting.route)
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
@@ -101,7 +108,7 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
                 },
                 onSearch = { query ->
                     if (query.trim().isNotEmpty()) {
-
+                        articlesViewModel.searchArticlesNews(query)
                     }
                 }
             )
@@ -139,7 +146,13 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
                 },
                 onSuccess = { artilesList ->
                     if (artilesList.isNotEmpty()) {
-                        getArticlesDummy(textInputSearch, artilesList)
+                        getArticlesDummy(
+                            navHostController,
+                            textInputSearch,
+                            artilesList,
+                            onClickItem = {
+                                navHostController.navigate(BottomBarScreen.ArticlesDetail.route)
+                            })
                     } else {
                         Box(
                             modifier = Modifier.fillMaxSize()
@@ -161,13 +174,15 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
 
 @Composable
 fun getArticlesDummy(
+    navHostController: NavHostController,
     textInputSearch: String,
-    listArticle: List<ArticlesResponse.Article>
+    listArticle: List<ArticlesMapping.Article>,
+    onClickItem: () -> Unit
 ) {
 
-    val filterArticles = listArticle.filter { itemArticle ->
-        itemArticle.title.contains(textInputSearch, true)
-    }
+//    val filterArticles = listArticle.filter { itemArticle ->
+//        itemArticle.title.contains(textInputSearch, true)
+//    }
 
     val isDekstop = remember {
         getType() == Type.Dekstop
@@ -179,30 +194,13 @@ fun getArticlesDummy(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        itemsIndexed(filterArticles) { index, item ->
-            ArticlesItem(item)
+        items(listArticle) { item ->
+            ArticlesItem(
+                navHostController,
+                item,
+                onClick = onClickItem
+            )
         }
-    }
-}
-
-@Composable
-fun HomeView(onNavigate: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Home")
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(
-            text = "Go to Detail screen",
-            modifier = Modifier.clickable {
-                onNavigate(AppScreen.Detail.route)
-            }
-        )
     }
 }
 

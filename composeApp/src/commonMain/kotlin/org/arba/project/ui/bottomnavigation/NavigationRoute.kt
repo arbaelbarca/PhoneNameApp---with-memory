@@ -48,12 +48,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.json.Json
+import org.arba.project.data.mapping.ArticlesMapping
 import org.arba.project.ui.page.bookmark.BookmarkScreen
+import org.arba.project.ui.page.detail.ArticlesDetailScreen
 import org.arba.project.ui.page.home.HomeScreen
-import org.arba.project.ui.page.home.HomeView
+import org.arba.project.ui.page.setting.SettingScreen
 import org.arba.project.utils.AppConstants
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun HomeNav() {
@@ -120,11 +121,23 @@ fun NavHostMain(
             }
         ) {
             composable(route = BottomBarScreen.Home.route) {
-                HomeScreen(onNavigate = onNavigate)
+                HomeScreen(navHostController = navController, onNavigate = onNavigate)
             }
             composable(route = BottomBarScreen.Bookmark.route) {
                 BookmarkScreen(onNavigate = onNavigate)
             }
+            composable(route = BottomBarScreen.ArticlesDetail.route) {
+                navController.previousBackStackEntry?.savedStateHandle?.get<String>("article")
+                    ?.let { article ->
+                        val currentArticle: ArticlesMapping.Article = Json.decodeFromString(article)
+                        ArticlesDetailScreen(navController = navController, currentArticle)
+                    }
+            }
+
+            composable(route = BottomBarScreen.Setting.route) {
+                SettingScreen(navController = navController)
+            }
+
         }
     }
 }
@@ -178,6 +191,18 @@ sealed class BottomBarScreen(
     data object Bookmark : BottomBarScreen(
         route = "BOOKMARK",
         title = "Favorite",
+        defaultIcon = Icons.Filled.Favorite,
+    )
+
+    data object ArticlesDetail : BottomBarScreen(
+        route = "ArticlesDetail",
+        title = "Detail",
+        defaultIcon = Icons.Filled.Favorite,
+    )
+
+    data object Setting : BottomBarScreen(
+        route = "Settings",
+        title = "Settings",
         defaultIcon = Icons.Filled.Favorite,
     )
 }
@@ -346,6 +371,7 @@ private val NavController.shouldShowBottomBar
     get() = when (this.currentBackStackEntry?.destination?.route) {
         BottomBarScreen.Home.route,
         BottomBarScreen.Bookmark.route,
+        BottomBarScreen.ArticlesDetail.route,
             -> true
 
         else -> false

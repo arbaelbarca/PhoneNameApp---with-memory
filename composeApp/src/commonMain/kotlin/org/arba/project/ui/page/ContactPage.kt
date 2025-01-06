@@ -44,9 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.arba.project.ui.state.ContactUiState
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun MainContactPage(contactViewModel: ContactViewModel) {
 

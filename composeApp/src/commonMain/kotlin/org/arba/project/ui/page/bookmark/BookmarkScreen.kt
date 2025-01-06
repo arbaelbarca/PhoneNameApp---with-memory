@@ -16,9 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import org.arba.project.ui.bottomnavigation.bottomListItem
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun BookmarkScreen(onNavigate: (String) -> Unit) {
     var currentRoute by remember { mutableStateOf(bottomListItem[0].route) }
